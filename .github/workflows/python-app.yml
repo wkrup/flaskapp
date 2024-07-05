@@ -32,7 +32,7 @@ jobs:
         tages: v1.0.0, latest
         registry: docker.io
         username: ${{secrets.DOCKER_USERNAME }}
-        password: $ {{secreats.DOCKER_PASSWORD }}
+        password: $ {{secrets.DOCKER_PASSWORD }}
 
     - name: Install dependencies
       run: |
