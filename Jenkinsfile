@@ -1,111 +1,63 @@
 pipeline {
 
-	agent any
+   agent any
 
-	parameters {
+   parameters {
 
-		choice(name: 'VERSION', choices: ['1.1.0','1.2.0','1.3.0'], description: '')
+      choice(name: 'VERSION', choices: ['1.1.0','1.2.0','1.3.0'], description: '')
 
-		booleanParam(name: 'executeTests', defaultValue: true, description: '')
+      booleanParam(name: 'executeTests', defaultValue: true, description: '')
 
-	}
+   }
 
-	stages {
+   stages {
 
-		stage("init") {
+      stage("Checkout") {
 
-			steps {
+         steps {
 
-				script {
+            checkout scm
 
-					gv = load "script.groovy"
+         }
 
-				}
+      }
 
-			}
+      stage("Build") {
 
-		}
+         steps {
 
-		stage("Checkout") {
+            sh 'docker-compose build web'
 
-			steps {
+         }
 
-				checkout scm
+      }
 
-			}
+      stage("Tag and Push") {
 
-		}
+         steps {
 
-		stage("Build") {
+              sh "docker tag jenkins-pipeline_web:latest ${DOCKER_USER_ID}/jenkins-app:${BUILD_NUMBER}"
 
-			steps {
+               sh "docker login -u ${DOCKER_USER_ID}-p ${DOCKER_USER_PASSWORD}"
 
-				sh 'docker build -t flask-jenkins:v1.0.0 .'
+               sh "docker push ${DOCKER_USER_ID}/jenkins-app:${BUILD_NUMBER}"
 
-			}
+         }
 
-		}
+      }
 
-		stage("test") {
+      stage("deploy") {
 
-			when {
+         steps {
 
-				expression {
+            sh "docker-compose up -d"
 
-					params.executeTests
+         }
 
-				}
+      }
 
-			}
-
-			steps {
-
-				script {
-
-					gv.testApp()
-
-				}
-
-			}
-
-		}
-
-		stage("Tag and Push") {
-
-			steps {
-
-				withCredentials([[$class: 'UsernamePasswordMultiBinding',
-
-				credentialsId: 'docker-hub', 
-
-				usernameVariable: 'DOCKER_USER_ID', 
-
-				passwordVariable: 'DOCKER_USER_PASSWORD'
-
-				]]) {
-
-					sh "docker tag flask-jenkins:latest ${DOCKER_USER_ID}/jenkins-app:${BUILD_NUMBER}"
-
-					sh "docker login -u ${DOCKER_USER_ID} -p ${DOCKER_USER_PASSWORD}"
-
-					sh "docker push ${DOCKER_USER_ID}/jenkins-app:${BUILD_NUMBER}"
-
-				}
-
-			}
-
-		}
-
-		stage("deploy") {
-
-			steps {
-
-				echo 'deploying the applicaiton...'
-
-			}
-
-		}
-
-	}
+   }
 
 }
+
+
