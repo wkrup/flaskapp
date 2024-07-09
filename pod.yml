@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: github-action
+  name: flaskapp
 spec:
   containers:
-  - name: github-action
+  - name: flaskapp
     image: twr319/github-actions-app:v1.0.0
     ports:
     - containerPort: 5000
