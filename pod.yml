@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: github-action
+spec:
+  containers:
+  - name: github-action
+    image: twr319/github-actions-app:v1.0.0
+    ports:
+    - containerPort: 5000
