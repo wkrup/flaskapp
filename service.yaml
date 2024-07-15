@@ -3,10 +3,9 @@ kind: Service
 metadata:
   name: flasksvc
 spec:
-  containers:
-    type: NodePort
-    ports:
-    - port: 5000
-      protocol: TCP
-    selector: 
-      app: flaskapp
+  type: NodePort
+  ports:
+  - port: 5000
+    protocol: TCP
+  selector:
+    app: flaskapp
