@@ -5,6 +5,8 @@ metadata:
 spec:
   containers:
   - name: flaskpod
-    image: twr319/flakapp:v1.0.0
+    labels:
+      app: flaskapp
+    image: twr319/flaskapp:v1.0.0
     ports:
     - containerPort: 5000
